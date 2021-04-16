@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "367970966246",
+    "project_id": "locationrater-e5b45",
+    "storage_bucket": "locationrater-e5b45.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367970966246:android:e5bf038b9a365c481df927",
+        "android_client_info": {
+          "package_name": "adhklsl.ajodh"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "367970966246-o39hnjuqlthlflnoopre5d2hbqde91qt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkAR0gtKWn09CLTj_vbEA4ewEyEaO9SzQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367970966246-o39hnjuqlthlflnoopre5d2hbqde91qt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367970966246:android:3a8f74cc5f54afdc1df927",
+        "android_client_info": {
+          "package_name": "com.example.LocationRater"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "367970966246-o39hnjuqlthlflnoopre5d2hbqde91qt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkAR0gtKWn09CLTj_vbEA4ewEyEaO9SzQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367970966246-o39hnjuqlthlflnoopre5d2hbqde91qt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
