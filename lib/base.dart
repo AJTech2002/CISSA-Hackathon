@@ -36,6 +36,8 @@ class LatLon {
 
   double distance(LatLon other)
   {
-    return pow(pow(this.lat-other.lat,2)+pow(this.lon-other.lon, 2),0.5);
+    //assuming 1 degree in latitude corresponds to 111 km 
+    //and 1 degree in longitude corresponds to 88 km in Melbourne
+    return pow(pow(111*(this.lat-other.lat),2)+pow(88*(this.lon-other.lon), 2),0.5);
   }
 }
