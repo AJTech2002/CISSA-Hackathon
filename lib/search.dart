@@ -1,4 +1,7 @@
+import 'package:geolocator/geolocator.dart';
+
 import 'base.dart';
+import 'gpsCalculator.dart';
 
 // begin mock functions
 
@@ -25,9 +28,6 @@ Future<List<Place>> fetchAllRestaurants() async{
   ];
 }
 
-LatLon getPos(){
-  return LatLon(37.813611,144.963055);
-}
 
 // end mock functions
 
@@ -47,7 +47,7 @@ Future<List<Place>> search(String query) async
   // retrieve places from database
   var places = await fetchAllRestaurants();
   // 
-  var currentPos=getPos();
+  var currentPos=await getCurrentLocation();
 
 
   // Returns a score for how relevant a place is, higher is better. If the 
