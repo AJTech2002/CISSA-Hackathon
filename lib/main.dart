@@ -51,31 +51,33 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$count',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+        appBar: AppBar(
+          title: Text(widget.title),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            FirebaseFirestore.instance //Adds timestamp to our database
-                .collection("Places")
-                .add({'timestamp': Timestamp.fromDate(DateTime.now())}),
-        child: Icon(Icons.add),
-      ),
-    );
+        floatingActionButton: FloatingActionButton(
+          onPressed: () =>
+              FirebaseFirestore.instance //Adds timestamp to our database
+                  .collection("Places")
+                  .add({'timestamp': Timestamp.fromDate(DateTime.now())}),
+          child: Icon(Icons.add),
+        ),
+        body: StreamBuilder(
+          stream: FirebaseFirestore.instance.collection("Brisbane").snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (!snapshot.hasData) return const SizedBox.shrink();
+            return ListView.builder(
+              itemCount: snapshot.data.docs.length,
+              itemBuilder: (BuildContext context, int index) {
+                final docData = snapshot.data.docs[index].data();
+                final dateTime = (docData['Places'] as Timestamp).toDate();
+                return ListTile(
+                  title: Text(dateTime.toString()),
+                );
+              },
+            );
+          },
+        ));
   }
 }
 
