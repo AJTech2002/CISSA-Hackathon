@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class Place {
 
   String address;
@@ -32,4 +34,10 @@ class LatLon {
     this.lon = _lon;
   }
 
+  double distance(LatLon other)
+  {
+    //assuming 1 degree in latitude corresponds to 111 km 
+    //and 1 degree in longitude corresponds to 88 km in Melbourne
+    return pow(pow(111*(this.lat-other.lat),2)+pow(88*(this.lon-other.lon), 2),0.5);
+  }
 }
