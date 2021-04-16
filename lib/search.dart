@@ -57,7 +57,10 @@ Future<List<Place>> search(String query) async
   // additive.
   double relevanceScore(Place place)
   {
-    return querySplit.fold<double>(0.0, (previousValue, element) => previousValue+(place.name.contains(element)?1:0) + (place.address.contains(element)?0.5:0) + ((place.type.contains(element))?2:0));
+    return querySplit.fold<double>(0.0, (previousValue, element) => previousValue + 
+      (place.name.toLowerCase().contains(element)?1:0) + 
+      (place.address.toLowerCase().contains(element)?0.5:0) + 
+      ((place.type.toLowerCase().contains(element))?2:0));
   }
 
   // Calculate the penalty score for a place, lower is better. Calculated
@@ -66,8 +69,8 @@ Future<List<Place>> search(String query) async
   // stars and is immediately nearby.
   double penaltyScore(Place place)
   {
-    var dist = place.position.distance(currentPos); 
-    return dist+(15-place.cleanlinessScore-place.socialDistancingScore-place.staffFriendlinessScore)/3;
+    var dist = getDistance(currentPos, place.position); 
+    return dist/1000+(15-place.cleanlinessScore-place.socialDistancingScore-place.staffFriendlinessScore)/3;
   }
 
   // Check for search query
