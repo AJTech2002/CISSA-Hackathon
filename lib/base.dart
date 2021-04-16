@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class Place {
 
   String address;
@@ -32,4 +34,8 @@ class LatLon {
     this.lon = _lon;
   }
 
+  double distance(LatLon other)
+  {
+    return pow(pow(this.lat-other.lat,2)+pow(this.lon-other.lon, 2),0.5);
+  }
 }
