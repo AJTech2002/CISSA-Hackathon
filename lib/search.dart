@@ -5,10 +5,19 @@ import 'base.dart';
 Future<List<Place>> fetchAllRestaurants() async{
   Place a= Place("5 queen st", "restaurant", LatLon(37.824611,144.943055));
   a.name = "mcdonalds";
+  a.cleanlinessScore = 3;
+  a.socialDistancingScore = 4;
+  a.staffFriendlinessScore = 4;
   Place b = Place("2 swanston st", "restaurant", LatLon(37.814611,144.963055));
   b.name = "kfc";
+  b.cleanlinessScore = 5;
+  b.socialDistancingScore = 5;
+  b.staffFriendlinessScore = 1;
   Place c = Place("253 swanston st", "casino", LatLon(37.813555,144.963955));
   c.name = "crown";
+  c.cleanlinessScore = 5;
+  c.socialDistancingScore = 4;
+  c.staffFriendlinessScore = 5;
   return [
     a,
     b,
@@ -66,7 +75,7 @@ Future<List<Place>> search(String query) async
   {
     // Remove irrelevant places and places with very long distance or very
     // low health rating. Keep only places with less penalty score than 5.
-    places.removeWhere((element) => relevanceScore(element)>0 && penaltyScore(element)<5);
+    places.removeWhere((element) => relevanceScore(element)==0 || penaltyScore(element)>=5);
     // Sort list by relevance minus penalty score, from highest to lowest.
     places.sort((a, b) => (((relevanceScore(b)-penaltyScore(b))-(relevanceScore(a)-penaltyScore(a)))*10).round());
     return places;
@@ -75,7 +84,7 @@ Future<List<Place>> search(String query) async
   {
     // Remove places with long distance or low health rating. Keep only
     // places with penalty score less than 2.5.
-    places.removeWhere((element) => penaltyScore(element)<2.5);
+    places.removeWhere((element) => penaltyScore(element)>=2.5);
     // Sort list by penalty score, from lowest to highest.
     places.sort((a,b) => ((penaltyScore(a)-penaltyScore(b))*10).round());
     return places;
