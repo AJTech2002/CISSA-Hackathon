@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
-import 'searchpage.dart';
+import 'main.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -40,10 +40,10 @@ class WelcomePage extends StatelessWidget {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/logo.jpeg"),
-                  fit: BoxFit.cover,
-                ),
+                // image: DecorationImage(
+                //   image: AssetImage("assets/logo.jpeg"),
+                //   fit: BoxFit.cover,
+                // ),
               ),
             ),
           ),
@@ -65,11 +65,11 @@ class WelcomePage extends StatelessWidget {
                 FittedBox(
                   child: GestureDetector(
                     onTap: () {
-                      // Navigator.push(context, MaterialPageRoute(
-                      //   builder: (context) {
-                      //     return SearchPage();
-                      //   },
-                      // ));
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return MyHomePage();
+                        },
+                      ));
                     },
                     child: Container(
                       margin: EdgeInsets.only(bottom: 25),
