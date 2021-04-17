@@ -10,6 +10,7 @@ Place firebaseStore(Place newDetails) {
   CollectionReference places = FirebaseFirestore.instance.collection('Places');
   places.doc(newDetails.address).set(_placeToMap(newDetails));
 
+  if (_listOfPlaces != null)
   for (int i = 0; i < _listOfPlaces.length; i++) {
     if (_listOfPlaces[i].address == newDetails.address)
     {
@@ -20,6 +21,26 @@ Place firebaseStore(Place newDetails) {
 
   return null;
 
+}
+
+Future<Place> getByAddress (String address) async
+{
+  List<Place> places = new List<Place>();
+  if (_listOfPlaces != null)
+  {
+    places = _listOfPlaces;
+  }
+  else {
+    places = await fetchAll();
+
+  }
+
+  for (int i = 0; i < places.length; i++)
+  {
+    if (places[i].address == address) return places[i];
+  }
+
+  return null;
 }
 
 Future<List<Place>> fetchAll() async

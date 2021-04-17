@@ -44,7 +44,7 @@ class _CircleButtonState extends State<CircleButton> {
           (
             color: down?Colors.orangeAccent:Colors.orangeAccent.shade700,
             borderRadius: BorderRadius.circular(50),
-            border: Border.all(color: Colors.orangeAccent.shade100, width: 2, style: BorderStyle.solid),
+            border: Border.all(color: Colors.orangeAccent.shade400, width: 2, style: BorderStyle.solid),
           ),
           child: Center(
             child: widget.icon,

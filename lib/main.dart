@@ -178,15 +178,12 @@ class _MyHomePageState extends State<MyHomePage> {
       currentFocus.unfocus();
     }
 
-    Navigator.push(context, MaterialPageRoute(
-      builder: (cont) {
-        return NewRating (
-          address: address,
-          currentPosition: new LatLon(_currentPosition.latitude, _currentPosition.longitude),
-        );
-      }
-    ));
-   
+    Navigator.push(context, MaterialPageRoute(builder: (cont) {
+      return NewRating(
+        address: address,
+        currentPosition: new LatLon(_currentPosition.latitude, _currentPosition.longitude),
+      );
+    }));
   }
 
   void _settingModalBottomSheet(context) {
@@ -198,7 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     List<Widget> tempPlaces = new List<Widget>();
 
-    for (int i = 0; i < currentlyLoaded.length.clamp(0, 5); i++) {
+    for (int i = 0; i < currentlyLoaded.length.clamp(0,4); i++) {
       tempPlaces.add(new PlaceWidget(
         place: currentlyLoaded[i],
         focusOn: (place) {
@@ -361,7 +358,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     setState(() {
                       loadingLocation = false;
                     });
-                    _settingModalBottomSheetAddLocation(context, value);
+
+                    getByAddress(value).then((foundLocation) {
+                      if (foundLocation == null) {
+                        _settingModalBottomSheetAddLocation(context, value);
+                      } else {
+                        focusOn(foundLocation, true);
+                      }
+                    });
                   });
                 },
               ),
@@ -397,16 +401,20 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             Rater(
                               callbackSubmit: (place) {
-                                Place modified = firebaseStore(place);
-                                place = null;
-                                ratingPanel = false;
+                                setState(() {
+                                  Place modified = firebaseStore(place);
+                                  place = null;
+                                  ratingPanel = false;
+                                });
                               },
                               selectedPlace: selectedPlace,
                               didChange: (b) {
                                 didMakeRatingChange = b;
                               },
                               didCancel: () {
-                                ratingPanel = false;
+                                setState(() {
+                                  ratingPanel = false;
+                                });
                               },
                             )
                           ],
