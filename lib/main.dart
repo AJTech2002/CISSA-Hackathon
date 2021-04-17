@@ -8,6 +8,7 @@ import 'ui/circle_button.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'ui/search_ui.dart';
 import 'package:geolocator/geolocator.dart';
+import 'ui/place.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,20 +49,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Place> currentlyLoaded = new List<Place>();
 
+  Position _currentPosition;
+  String searchQuery = "";
+
+  bool loadingLocation = false;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
     _getCurrentLocation((p) {});
-
-    Future.delayed(Duration(milliseconds: 2000), () {
-      createUserMapPosition(true);
-    });
   }
 
   void createUserMapPosition(bool move) {
-    _controller.removeCircle(userCircle);
+    //_controller.removeCircle(userCircle);
+
     if (userCircle == null) {
       _controller
           .addCircle(
@@ -74,16 +77,13 @@ class _MyHomePageState extends State<MyHomePage> {
               // Otherwise, you'll get a silent exception somewhere in the stack
               // trace, but the parameter is never marked as @required, so you'll
               // never know unless you check the stack trace
-              geometry: new LatLng(
-                  _currentPosition.latitude, _currentPosition.longitude),
+              geometry: new LatLng(_currentPosition.latitude, _currentPosition.longitude),
               draggable: false,
             ),
           )
           .then((value) => userCircle = value)
           .then((v) {
-        if (move)
-          _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(
-              _currentPosition.latitude, _currentPosition.longitude)));
+        if (move) _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(_currentPosition.latitude, _currentPosition.longitude)));
       });
     } else {
       _controller
@@ -98,14 +98,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 // Otherwise, you'll get a silent exception somewhere in the stack
                 // trace, but the parameter is never marked as @required, so you'll
                 // never know unless you check the stack trace
-                geometry: new LatLng(
-                    _currentPosition.latitude, _currentPosition.longitude),
+                geometry: new LatLng(_currentPosition.latitude, _currentPosition.longitude),
                 draggable: false,
               ))
           .then((v) {
-        if (move)
-          _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(
-              _currentPosition.latitude, _currentPosition.longitude)));
+        if (move) _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(_currentPosition.latitude, _currentPosition.longitude)));
       });
     }
   }
@@ -114,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void clearPoints() {
     _controller.clearCircles();
+    userCircle = null;
     createUserMapPosition(false);
   }
 
@@ -121,42 +119,44 @@ class _MyHomePageState extends State<MyHomePage> {
     currentlyLoaded = points;
     for (int i = 0; i < points.length; i++) {
       if (i == 0) {
-        _controller.moveCamera(CameraUpdate.newLatLng(
-            new LatLng(points[i].position.lat, points[i].position.lon)));
+        _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(points[i].position.lat, points[i].position.lon)));
       }
 
       String colorString = "";
 
-      if (i == 0)
-        colorString = "#1fff57";
-      else if (i == 1)
-        colorString = "#b4ff1f";
-      else if (i == 2)
-        colorString = "fff41f";
-      else if (i == 3)
-        colorString = "#ffa51f";
-      else if (i == 4)
-        colorString = "#ff5e1f";
-      else if (i > 5) colorString = "#ff2e1f";
+      // if (i == 0)
+      //   colorString = "#1fff57";
+      // else if (i == 1)
+      //   colorString = "#b4ff1f";
+      // else if (i == 2)
+      //   colorString = "#fff41f";
+      // else if (i == 3)
+      //   colorString = "#ffa51f";
+      // else if (i == 4)
+      //   colorString = "#ff5e1f";
+      // else if (i >= 5) colorString = "#ff2e1f";
+      // else colorString = "#ff2e1f";
+      
+      colorString = "#ff2e17";
 
       _controller.addCircle(CircleOptions(
-        circleRadius: 10.0,
+        circleRadius: 7.0,
         circleColor: colorString,
-        circleOpacity: 1,
+        circleOpacity: 0.8,
         geometry: new LatLng(points[i].position.lat, points[i].position.lon),
         draggable: false,
       ));
+
     }
   }
 
-  Position _currentPosition;
-
   _getCurrentLocation(Function(Position) then) {
-    Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.low,
-            forceAndroidLocationManager: true)
-        .then((Position position) {
+    setState(() {
+      loadingLocation = true;
+    });
+    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low).then((Position position) {
       setState(() {
+        loadingLocation = false;
         _currentPosition = position;
       });
       then(position);
@@ -164,8 +164,6 @@ class _MyHomePageState extends State<MyHomePage> {
       print(e);
     });
   }
-
-  String searchQuery = "";
 
   void _settingModalBottomSheet(context) {
     FocusScopeNode currentFocus = FocusScope.of(context);
@@ -176,10 +174,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
     List<Widget> tempPlaces = new List<Widget>();
 
+    for (int i = 0; i < currentlyLoaded.length; i++) {
+      tempPlaces.add(new PlaceWidget(
+        place: currentlyLoaded[i],
+        index: i,
+      ));
+      tempPlaces.add(new Container(
+        margin: EdgeInsets.only(left: 30, right: 30),
+        height: 1,
+        color: Colors.grey.shade300,
+      ));
+    } 
+
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
           return Container(
+
               color: Colors.white12,
               child: Column(
                 children: [
@@ -190,7 +201,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: TextStyle(fontSize: 22),
                     ),
                   ),
-                  ...tempPlaces
+                  (tempPlaces.length<=0)?Text('No Search Results Found'):Container(),
+                 ...tempPlaces 
                 ],
               ));
         });
@@ -204,8 +216,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Stack(
           children: [
             MapboxMap(
-              accessToken:
-                  "pk.eyJ1IjoiYXZlbmsyIiwiYSI6ImNqcTV3ZG50bTI5MXM0OXVpbGdwdnBjaWoifQ.tReRhSlsmVBqt8lwwq1wHg",
+              accessToken: "pk.eyJ1IjoiYXZlbmsyIiwiYSI6ImNqcTV3ZG50bTI5MXM0OXVpbGdwdnBjaWoifQ.tReRhSlsmVBqt8lwwq1wHg",
               styleString: "mapbox://styles/avenk2/cjqaxhjumfqds2spbiudepom4",
               initialCameraPosition: CameraPosition(
                 zoom: 15.0,
@@ -216,6 +227,9 @@ class _MyHomePageState extends State<MyHomePage> {
               onMapCreated: (MapboxMapController controller) {
                 setState(() {
                   _controller = controller;
+                });
+                _getCurrentLocation((pos) {
+                  createUserMapPosition(true);
                 });
               },
               onMapClick: (point, lat) {
@@ -242,19 +256,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                       clearPoints: () => clearPoints())),
             ),
-            Text((_currentPosition != null)
-                ? (_currentPosition.latitude.toString() +
-                    " , " +
-                    _currentPosition.longitude.toString())
-                : "NONE"),
+            Center(child:loadingLocation?Text("Location is Loading..."):null),
             Align(
               alignment: Alignment.topRight,
               child: CircleButton(
                 icon: Icon(Icons.location_on, color: Colors.white),
                 margin: EdgeInsets.only(top: 20, right: 20),
                 tapCallback: () {
-                  _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(
-                      _currentPosition.latitude, _currentPosition.longitude)));
+                  _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(_currentPosition.latitude, _currentPosition.longitude)));
                   _getCurrentLocation((pos) {
                     createUserMapPosition(true);
                   });

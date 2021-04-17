@@ -22,6 +22,7 @@ Future<List<Place>> search(String query) async
   // 
   var currentPos=await getCurrentLocation();
 
+  print (places.length);
 
   // Returns a score for how relevant a place is, higher is better. If the 
   // place's name contains a keyword then it receives a score of 1, if its 
@@ -43,6 +44,7 @@ Future<List<Place>> search(String query) async
   double penaltyScore(Place place)
   {
     var dist = getDistance(currentPos, place.position); 
+    print (place.position.lat.toString() + " , " + place.position.lon.toString());
     return dist/1000+(15-place.cleanlinessScore-place.socialDistancingScore-place.staffFriendlinessScore)/3;
   }
 
@@ -54,6 +56,7 @@ Future<List<Place>> search(String query) async
     places.removeWhere((element) => relevanceScore(element)==0 || penaltyScore(element)>=5);
     // Sort list by relevance minus penalty score, from highest to lowest.
     places.sort((a, b) => (((relevanceScore(b)-penaltyScore(b))-(relevanceScore(a)-penaltyScore(a)))*10).round());
+
     return places;
   }
   else
