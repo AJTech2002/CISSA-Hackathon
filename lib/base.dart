@@ -8,14 +8,27 @@ class Place {
 
   LatLon position;
   
-  int ratingCount;
+  int ratingCount = 0;
   //All out of 5
-  double socialDistancingScore;
-  double cleanlinessScore;
-  double staffFriendlinessScore;
+  double socialDistancingScore = 0.0;
+  double cleanlinessScore= 0.0;
+  double staffFriendlinessScore= 0.0;
 
   //Other ratings ...
   
+  Place copy ()
+  {
+    Place a = new Place(address, type, position);
+    a.name = name;
+    a.address = address;
+    a.type = type;
+    a.position = new LatLon(position.lat,position.lon);
+    a.ratingCount = ratingCount;
+    a.socialDistancingScore = socialDistancingScore;
+    a.cleanlinessScore = cleanlinessScore;
+    a.staffFriendlinessScore = staffFriendlinessScore;
+    return a;
+  }
 
   Place (String address, String type, LatLon pos)
   {

@@ -6,9 +6,41 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 List<Place> _listOfPlaces;
 
-void firebaseStore(Place newDetails) {
+Place firebaseStore(Place newDetails) {
   CollectionReference places = FirebaseFirestore.instance.collection('Places');
   places.doc(newDetails.address).set(_placeToMap(newDetails));
+
+  if (_listOfPlaces != null)
+  for (int i = 0; i < _listOfPlaces.length; i++) {
+    if (_listOfPlaces[i].address == newDetails.address)
+    {
+      _listOfPlaces[i] = newDetails.copy();
+      return _listOfPlaces[i];
+    }
+  }
+
+  return null;
+
+}
+
+Future<Place> getByAddress (String address) async
+{
+  List<Place> places = new List<Place>();
+  if (_listOfPlaces != null)
+  {
+    places = _listOfPlaces;
+  }
+  else {
+    places = await fetchAll();
+
+  }
+
+  for (int i = 0; i < places.length; i++)
+  {
+    if (places[i].address == address) return places[i];
+  }
+
+  return null;
 }
 
 Future<List<Place>> fetchAll() async
@@ -17,7 +49,10 @@ Future<List<Place>> fetchAll() async
   _listOfPlaces = [];
   CollectionReference places = FirebaseFirestore.instance.collection('Places');
   var collectionSnapshot = await places.get();
-  collectionSnapshot.docs.forEach((element) { _listOfPlaces.add(_snapshotToPlace(element));});
+  collectionSnapshot.docs.forEach((element) {  _listOfPlaces.add(_snapshotToPlace(element));});
+
+  print ("Firebase:" + _listOfPlaces.length.toString());
+
   return List.from(_listOfPlaces);
 }
 
@@ -44,17 +79,21 @@ Map<String, dynamic> _placeToMap(Place place) {
 
 Place _snapshotToPlace(DocumentSnapshot snapshot) {
   Place place = Place(snapshot['address'], snapshot['type'],
-      LatLon(snapshot['position_lon'], snapshot['position_lat']));
+  LatLon((snapshot['position_lat']).toDouble(),(snapshot['position_lon']).toDouble()));
   place.name = snapshot['name'];
   place.ratingCount = snapshot['rating_count'];
-  place.socialDistancingScore = snapshot['social_distancing_score'];
-  place.cleanlinessScore = snapshot['cleanliness_score'];
-  place.staffFriendlinessScore = snapshot['staff_friendliness_score'];
+  place.socialDistancingScore = (snapshot['social_distancing_score']).toDouble();
+  place.cleanlinessScore = (snapshot['cleanliness_score']).toDouble();
+  place.staffFriendlinessScore = (snapshot['staff_friendliness_score']).toDouble();
   return place;
 }
 
-Future<void> rate(String address, double socialDistancingScore, double cleanlinessScore, double staffFriendlinessScore) async
+
+// Rate a place and store rating in the database. If the place does not exist then
+// return false, otherwise return true.
+Future<bool> rate(String address, double socialDistancingScore, double cleanlinessScore, double staffFriendlinessScore) async
 {
+  if(!knownLocation(address)) return false;
   Place place = (await fetchAll()).firstWhere((element) => element.address==address);
   int count = place.ratingCount;
   place.socialDistancingScore = (count * place.socialDistancingScore + socialDistancingScore) / (count + 1);
@@ -68,4 +107,18 @@ Future<void> rate(String address, double socialDistancingScore, double cleanline
     'cleanlinessScore': cleanlinessScore,
     'staffFriendlinessScore': staffFriendlinessScore
   });
+  return true;
+}
+
+bool knownLocation(String address)
+{
+  if(_listOfPlaces == null) fetchAll();
+  return _listOfPlaces.indexWhere((element) => element.address==address) > -1;
+}
+
+void storeNew(Place place)
+{
+  if(_listOfPlaces==null) fetchAll();
+  _listOfPlaces.add(place);
+  firebaseStore(place);
 }
