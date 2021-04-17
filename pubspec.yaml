@@ -34,6 +34,7 @@ dependencies:
   cloud_firestore: "^0.16.0+1"
   geocoding: ^1.0.5
   mapbox_gl: ^0.11.0
+  smooth_star_rating: ^1.1.1
 
 dev_dependencies:
   flutter_test:

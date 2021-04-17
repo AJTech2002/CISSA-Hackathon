@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import '../base.dart';
 
 class PlaceWidget extends StatelessWidget {
-  const PlaceWidget({Key key, this.place, this.index}) : super(key: key);
+  const PlaceWidget({Key key, this.place, this.index, this.focusOn}) : super(key: key);
 
   final Place place;
   final int index;
+  final Function(Place) focusOn;
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +14,7 @@ class PlaceWidget extends StatelessWidget {
       onTap: ()
       {
         print (place.name);
+        focusOn(this.place);
       },
       child: Container(
         color: Colors.white,
@@ -21,7 +23,7 @@ class PlaceWidget extends StatelessWidget {
             Align(
                 alignment: Alignment.topLeft,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 20, right: 20),
                   child: Text(
                     place.name,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -30,7 +32,7 @@ class PlaceWidget extends StatelessWidget {
             Align(
                 alignment: Alignment.bottomLeft,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0, bottom: 15.0),
+                  padding: const EdgeInsets.only(left: 20, right: 20, top: 8.0, bottom: 15.0),
                   child: Text(place.address),
                 )),
           ],

@@ -6,6 +6,7 @@ class CircleButton extends StatefulWidget {
   final Icon icon;
   final Function tapCallback;
   final EdgeInsets margin;
+  
 
   @override
   _CircleButtonState createState() => _CircleButtonState();
@@ -36,8 +37,8 @@ class _CircleButtonState extends State<CircleButton> {
         },
         child: AnimatedContainer (
           duration: Duration(milliseconds: 100),
-          width: 60,
-          height: 60,
+          width: 50,
+          height: 50,
           margin: widget.margin,
           decoration: BoxDecoration
           (

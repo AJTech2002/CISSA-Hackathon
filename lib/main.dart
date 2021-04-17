@@ -9,6 +9,9 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'ui/search_ui.dart';
 import 'package:geolocator/geolocator.dart';
 import 'ui/place.dart';
+import 'firebase.dart';
+import 'ui/rater.dart';
+import 'ui/new_rating.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,7 +55,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Position _currentPosition;
   String searchQuery = "";
 
+  Place selectedPlace = null;
+  bool ratingPanel = false;
+
   bool loadingLocation = false;
+  bool didMakeRatingChange = false;
 
   @override
   void initState() {
@@ -90,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
           .updateCircle(
               userCircle,
               CircleOptions(
-                circleRadius: 12.0,
+                circleRadius: 8.0,
                 circleColor: '#3885ff',
                 circleOpacity: 1,
 
@@ -136,17 +143,16 @@ class _MyHomePageState extends State<MyHomePage> {
       //   colorString = "#ff5e1f";
       // else if (i >= 5) colorString = "#ff2e1f";
       // else colorString = "#ff2e1f";
-      
+
       colorString = "#ff2e17";
 
       _controller.addCircle(CircleOptions(
-        circleRadius: 7.0,
+        circleRadius: 12,
         circleColor: colorString,
         circleOpacity: 0.8,
         geometry: new LatLng(points[i].position.lat, points[i].position.lon),
         draggable: false,
       ));
-
     }
   }
 
@@ -165,6 +171,24 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _settingModalBottomSheetAddLocation(BuildContext context, String address) {
+    FocusScopeNode currentFocus = FocusScope.of(context);
+
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
+
+    Navigator.push(context, MaterialPageRoute(
+      builder: (cont) {
+        return NewRating (
+          address: address,
+          currentPosition: new LatLon(_currentPosition.latitude, _currentPosition.longitude),
+        );
+      }
+    ));
+   
+  }
+
   void _settingModalBottomSheet(context) {
     FocusScopeNode currentFocus = FocusScope.of(context);
 
@@ -174,9 +198,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
     List<Widget> tempPlaces = new List<Widget>();
 
-    for (int i = 0; i < currentlyLoaded.length; i++) {
+    for (int i = 0; i < currentlyLoaded.length.clamp(0, 5); i++) {
       tempPlaces.add(new PlaceWidget(
         place: currentlyLoaded[i],
+        focusOn: (place) {
+          Navigator.pop(context);
+          focusOn(place, true);
+        },
         index: i,
       ));
       tempPlaces.add(new Container(
@@ -184,13 +212,12 @@ class _MyHomePageState extends State<MyHomePage> {
         height: 1,
         color: Colors.grey.shade300,
       ));
-    } 
+    }
 
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
           return Container(
-
               color: Colors.white12,
               child: Column(
                 children: [
@@ -201,11 +228,49 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: TextStyle(fontSize: 22),
                     ),
                   ),
-                  (tempPlaces.length<=0)?Text('No Search Results Found'):Container(),
-                 ...tempPlaces 
+                  (tempPlaces.length <= 0) ? Text('No Search Results Found') : Container(),
+                  ...tempPlaces
                 ],
               ));
         });
+  }
+
+  bool approximatelyEqual(double a, double b) {
+    if ((a - b).abs() < 0.0000001) {
+      return true;
+    } else
+      return false;
+  }
+
+  Future<Place> findPlace(LatLon pos) {
+    return fetchAll().then((places) {
+      print("NEED : " + pos.lat.toString() + " , " + pos.lon.toString());
+      for (int i = 0; i < places.length; i++) {
+        print(places[i].position.lat.toString() + " , " + places[i].position.lon.toString());
+        if (approximatelyEqual(places[i].position.lat, pos.lat) && approximatelyEqual(places[i].position.lon, pos.lon)) {
+          return places[i];
+        }
+      }
+
+      return null;
+    });
+  }
+
+  void focusOn(Place place, bool move) {
+    if (move) _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(place.position.lat, place.position.lon)));
+    setState(() {
+      didMakeRatingChange = false;
+      ratingPanel = true;
+      selectedPlace = place.copy();
+    });
+  }
+
+  void onCircleTapped(Circle tappedCircle) {
+    findPlace(new LatLon(tappedCircle.options.geometry.latitude, tappedCircle.options.geometry.longitude)).then((place) {
+      if (place != null) {
+        focusOn(place, false);
+      }
+    });
   }
 
   @override
@@ -227,6 +292,10 @@ class _MyHomePageState extends State<MyHomePage> {
               onMapCreated: (MapboxMapController controller) {
                 setState(() {
                   _controller = controller;
+
+                  _controller.onCircleTapped.add((argument) {
+                    onCircleTapped(argument);
+                  });
                 });
                 _getCurrentLocation((pos) {
                   createUserMapPosition(true);
@@ -238,30 +307,38 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (!currentFocus.hasPrimaryFocus) {
                   currentFocus.unfocus();
                 }
+
+                if (ratingPanel) {
+                  setState(() {
+                    ratingPanel = false;
+                  });
+                }
               },
             ),
+            (!ratingPanel)
+                ? Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                        height: 120,
+                        width: MediaQuery.of(context).size.width,
+                        child: SearchBar(
+                            pointsFound: (points, text) {
+                              setState(() {
+                                searchQuery = text;
+                                currentlyLoaded = points;
+                              });
+                              _settingModalBottomSheet(context);
+                              addPoints(points);
+                            },
+                            clearPoints: () => clearPoints())),
+                  )
+                : Container(),
+            Center(child: loadingLocation ? Text("Loading...") : null),
             Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                  height: 120,
-                  width: MediaQuery.of(context).size.width,
-                  child: SearchBar(
-                      pointsFound: (points, text) {
-                        setState(() {
-                          searchQuery = text;
-                          currentlyLoaded = points;
-                        });
-                        _settingModalBottomSheet(context);
-                        addPoints(points);
-                      },
-                      clearPoints: () => clearPoints())),
-            ),
-            Center(child:loadingLocation?Text("Location is Loading..."):null),
-            Align(
-              alignment: Alignment.topRight,
+              alignment: Alignment.bottomLeft,
               child: CircleButton(
                 icon: Icon(Icons.location_on, color: Colors.white),
-                margin: EdgeInsets.only(top: 20, right: 20),
+                margin: EdgeInsets.only(bottom: (ratingPanel && selectedPlace != null) ? 30 : 130, left: 20),
                 tapCallback: () {
                   _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(_currentPosition.latitude, _currentPosition.longitude)));
                   _getCurrentLocation((pos) {
@@ -271,14 +348,70 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             Align(
-                alignment: Alignment.topRight,
-                child: CircleButton(
-                  icon: Icon(Icons.add_location, color: Colors.white),
-                  margin: EdgeInsets.only(top: 100, right: 20),
-                  tapCallback: () {
-                    print("Switch");
-                  },
-                ))
+              alignment: Alignment.bottomLeft,
+              child: CircleButton(
+                icon: Icon(Icons.add, color: Colors.white),
+                margin: EdgeInsets.only(bottom: (ratingPanel && selectedPlace != null) ? 30 : 130, left: 80),
+                tapCallback: () {
+                  setState(() {
+                    loadingLocation = true;
+                  });
+
+                  getAddress(new LatLon(_currentPosition.latitude, _currentPosition.longitude)).then((value) {
+                    setState(() {
+                      loadingLocation = false;
+                    });
+                    _settingModalBottomSheetAddLocation(context, value);
+                  });
+                },
+              ),
+            ),
+            Align(
+                alignment: Alignment.topCenter,
+                child: (ratingPanel && selectedPlace != null)
+                    ? Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 450,
+                        margin: EdgeInsets.all(30),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.white.withOpacity(1),
+                        ),
+                        child: Column(
+                          children: [
+                            Align(
+                                alignment: Alignment.topLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 20.0, bottom: 8.0, left: 20, right: 20),
+                                  child: Text(
+                                    selectedPlace.name,
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                  ),
+                                )),
+                            Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 20, right: 20, top: 8.0, bottom: 15.0),
+                                child: Text(selectedPlace.address),
+                              ),
+                            ),
+                            Rater(
+                              callbackSubmit: (place) {
+                                Place modified = firebaseStore(place);
+                                place = null;
+                                ratingPanel = false;
+                              },
+                              selectedPlace: selectedPlace,
+                              didChange: (b) {
+                                didMakeRatingChange = b;
+                              },
+                              didCancel: () {
+                                ratingPanel = false;
+                              },
+                            )
+                          ],
+                        ))
+                    : Container()),
           ],
         )),
       ),
