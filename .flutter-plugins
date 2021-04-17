@@ -1,4 +1,14 @@
 # This is a generated file; do not edit or check into version control.
-geocoder=C:\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\geocoder-0.2.1\\
-geolocator=C:\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\geolocator-6.2.1\\
-geolocator_web=C:\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\geolocator_web-1.0.1\\
+cloud_firestore=C:\\Users\\jybgw\\AppData\\Local\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\cloud_firestore-0.16.0+1\\
+cloud_firestore_web=C:\\Users\\jybgw\\AppData\\Local\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\cloud_firestore_web-0.3.0+2\\
+firebase_core=C:\\Users\\jybgw\\AppData\\Local\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\firebase_core-0.7.0\\
+firebase_core_web=C:\\Users\\jybgw\\AppData\\Local\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\firebase_core_web-0.2.1+3\\
+geocoder=C:\\Users\\jybgw\\AppData\\Local\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\geocoder-0.2.1\\
+geocoding=C:\\Users\\jybgw\\AppData\\Local\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\geocoding-1.0.5\\
+geolocator=C:\\Users\\jybgw\\AppData\\Local\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\geolocator-6.2.1\\
+geolocator_web=C:\\Users\\jybgw\\AppData\\Local\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\geolocator_web-1.0.1\\
+url_launcher=C:\\Users\\jybgw\\AppData\\Local\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\url_launcher-5.7.10\\
+url_launcher_linux=C:\\Users\\jybgw\\AppData\\Local\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\url_launcher_linux-0.0.1+4\\
+url_launcher_macos=C:\\Users\\jybgw\\AppData\\Local\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\url_launcher_macos-0.0.1+9\\
+url_launcher_web=C:\\Users\\jybgw\\AppData\\Local\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\url_launcher_web-0.1.5+3\\
+url_launcher_windows=C:\\Users\\jybgw\\AppData\\Local\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\url_launcher_windows-0.0.1+3\\
