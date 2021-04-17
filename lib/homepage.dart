@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
-import 'searchpage.dart';
+import 'rating.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -67,7 +67,9 @@ class WelcomePage extends StatelessWidget {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return SearchPage();
+                          //////// NEXT PAGE HERE ///////////////////
+                          //////////////////////////////////////////
+                          return Rating(); // NEED REFACTOR
                         },
                       ));
                     },
