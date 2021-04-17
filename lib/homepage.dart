@@ -7,25 +7,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Page 1',
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: kPrimaryColor,
-        scaffoldBackgroundColor: kBackgroundColor,
-        textTheme: TextTheme(
-          display1: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          button: TextStyle(color: kPrimaryColor),
-          headline:
-              TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.white.withOpacity(.2),
-            ),
-          ),
-        ),
-      ),
       home: WelcomePage(),
     );
   }
@@ -35,6 +16,7 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kBackgroundColor,
       body: Column(
         children: <Widget>[
           Expanded(
@@ -57,7 +39,11 @@ class WelcomePage extends StatelessWidget {
                     children: [
                       TextSpan(
                         text: "Your Local Covid-Safety Assisstant\n",
-                        style: Theme.of(context).textTheme.headline,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
@@ -71,7 +57,11 @@ class WelcomePage extends StatelessWidget {
                     children: [
                       TextSpan(
                         text: "Welcome!\n",
-                        style: Theme.of(context).textTheme.display1,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
