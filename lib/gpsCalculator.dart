@@ -4,8 +4,7 @@ import 'base.dart';
 
 // getCurrentLocation() is modified based on the usage example at https://pub.dev/packages/geolocator, published Apr 14, 2021
 
-class GpsCalculator {
-  /// Determine the current position of the device.
+/// Determine the current position of the device.
   ///
   /// When the location services are not enabled or permissions
   /// are denied the Future will return an error.
@@ -69,4 +68,3 @@ class GpsCalculator {
 
     return distanceInMeters;
   }
-}
