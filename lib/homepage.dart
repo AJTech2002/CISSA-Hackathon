@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
-import 'rating.dart';
+import 'commentpage.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -49,8 +49,22 @@ class WelcomePage extends StatelessWidget {
           ),
           Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Your Location Covid-Safety Assisstant\n",
+                        style: Theme.of(context).textTheme.headline,
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 80.0,
+                ),
                 RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
@@ -69,7 +83,7 @@ class WelcomePage extends StatelessWidget {
                         builder: (context) {
                           //////// NEXT PAGE HERE ///////////////////
                           //////////////////////////////////////////
-                          return Rating(); // NEED REFACTOR
+                          return CommentPage(); // NEED REFACTOR
                         },
                       ));
                     },
