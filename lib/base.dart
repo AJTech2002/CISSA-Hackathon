@@ -10,6 +10,8 @@ class Place {
   double cleanlinessScore;
   double staffFriendlinessScore;
 
+  int ratingCount;
+
   //Other ratings ...
 
   Place(String address, String type, LatLon pos) {

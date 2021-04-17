@@ -28,7 +28,6 @@
     <list default="true" id="5119ee55-5199-40cc-a629-97f4a382a1c4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LocationRater.iml" beforeDir="false" afterPath="$PROJECT_DIR$/LocationRater.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LocationRater/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/LocationRater/README.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/android/LocationRater_android.iml" beforeDir="false" afterPath="$PROJECT_DIR$/android/LocationRater_android.iml" afterDir="false" />
@@ -111,10 +110,10 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="482" y="334" key="#Notifications/0.0.1536.824@0.0.1536.824" timestamp="1618454691546" />
-    <state x="93" y="93" width="1350" height="638" key="AVDManager" timestamp="1618576466368">
+    <state x="39" y="66" width="1350" height="638" key="AVDManager" timestamp="1618617042031">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="93" y="93" width="1350" height="638" key="AVDManager/0.0.1536.824@0.0.1536.824" timestamp="1618576466368" />
+    <state x="39" y="66" width="1350" height="638" key="AVDManager/0.0.1536.824@0.0.1536.824" timestamp="1618617042031" />
     <state x="318" y="167" key="FileChooserDialogImpl" timestamp="1618557004212">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -151,9 +150,9 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="166" y="187" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1618454350189" />
-    <state x="432" y="146" width="672" height="678" key="search.everywhere.popup" timestamp="1618454376356">
+    <state x="432" y="146" width="672" height="678" key="search.everywhere.popup" timestamp="1618611574978">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="432" y="146" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1618454376356" />
+    <state x="432" y="146" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1618611574978" />
   </component>
 </project>

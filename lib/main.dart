@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'firebase.dart';
+import 'base.dart';
+
 //
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +33,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
-
   final String title;
 
   @override
@@ -39,67 +40,39 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int count = 0;
+  int _counter = 0;
+  Place newDetails = new Place('hello', '123', new LatLon(0.2, 0.3));
 
   void _incrementCounter() {
-    setState(() {
-      count++;
-    });
-    print(count);
+    fetchAll();
+    fetchByType("Restaurant"); //Whatever the user input is
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'You have pushed the button this many times:',
+            ),
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+          ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () =>
-              FirebaseFirestore.instance //Adds timestamp to our database
-                  .collection("Places")
-                  .add({'timestamp': Timestamp.fromDate(DateTime.now())}),
-          child: Icon(Icons.add),
-        ),
-        body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("Brisbane").snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) return const SizedBox.shrink();
-            return ListView.builder(
-              itemCount: snapshot.data.docs.length,
-              itemBuilder: (BuildContext context, int index) {
-                final docData = snapshot.data.docs[index].data();
-                final dateTime = (docData['Places'] as Timestamp).toDate();
-                return ListTile(
-                  title: Text(dateTime.toString()),
-                );
-              },
-            );
-          },
-        ));
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
+      ),
+    );
   }
 }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     CollectionReference users = FirebaseFirestore.instance.collection('Places');
-
-//     return FutureBuilder<DocumentSnapshot>(
-//       future: users.doc(id).get(),
-//       builder:
-//           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-//         if (snapshot.hasError) {
-//           return Text("Something went wrong");
-//         }
-
-//         if (snapshot.connectionState == ConnectionState.done) {
-//           Map<String, dynamic> data = snapshot.data.data();
-//           return Text("Name: ${data['name']}");
-//         }
-
-//         return Text("loading");
-//       },
-//     );
-//   }
-// }

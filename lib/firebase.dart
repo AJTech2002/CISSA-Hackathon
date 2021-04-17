@@ -1,34 +1,57 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-// Import the firebase_core and cloud_firestore plugin
-import 'package:firebase_core/firebase_core.dart';
+import 'base.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-FirebaseFirestore firestore = FirebaseFirestore.instance;
+List<Place> _listOfPlaces;
 
-class GetId extends StatelessWidget {
-  final String id = "Brisbane";
+firebaseStore(Place newDetails) {
+  // THis function works
+  CollectionReference places = FirebaseFirestore.instance.collection('Places');
+  places.doc(newDetails.address).set(_placeToMap(newDetails));
+}
 
-  @override
-  Widget build(BuildContext context) {
-    CollectionReference users = FirebaseFirestore.instance.collection('Places');
+fetchAll() async {
+  //function is working
+  CollectionReference _collectionRef =
+      FirebaseFirestore.instance.collection('Places');
+  // Get docs from collection reference
+  QuerySnapshot querySnapshot = await _collectionRef.get();
+  // Get data from docs and convert map to List
+  final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+  return allData;
+}
 
-    return FutureBuilder<DocumentSnapshot>(
-      future: users.doc(id).get(),
-      builder:
-          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        if (snapshot.hasError) {
-          return Text("Something went wrong");
-        }
+fetchByType(String type) async {
+  var places = await fetchAll();
+  places.removeWhere(([element]) => element['type'] != type);
+  print("*******************");
+  print(places);
+  return places;
+}
 
-        if (snapshot.connectionState == ConnectionState.done) {
-          Map<String, dynamic> data = snapshot.data.data();
-          return Text("Name: ${data['name']}");
-        }
+Map<String, dynamic> _placeToMap(Place place) {
+  return {
+    'name': place.name,
+    'address': place.address,
+    'type': place.type,
+    'position_lon': place.position.lon,
+    'position_lat': place.position.lat,
+    'rating_count': place.ratingCount,
+    'social_distancing_score': place.socialDistancingScore,
+    'cleanliness_score': place.cleanlinessScore,
+    'staff_friendliness_score': place.staffFriendlinessScore,
+  };
+}
 
-        return Text("loading");
-      },
-    );
-  }
+Place _snapshotToPlace(DocumentSnapshot snapshot) {
+  Place place = Place(snapshot['address'], snapshot['type'],
+      LatLon(snapshot['position_lon'], snapshot['position_lat']));
+  place.name = snapshot['name'];
+  place.ratingCount = snapshot['rating_count'];
+  place.socialDistancingScore = snapshot['social_distancing_score'];
+  place.cleanlinessScore = snapshot['cleanliness_score'];
+  place.staffFriendlinessScore = snapshot['staff_friendliness_score'];
+  return place;
 }
