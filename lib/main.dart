@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
+
 import 'gpsCalculator.dart';
 import 'search.dart';
 import 'base.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'homepage.dart';
 import 'ui/circle_button.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
 import 'ui/search_ui.dart';
-import 'package:geolocator/geolocator.dart';
 import 'ui/place.dart';
 import 'firebase.dart';
 import 'ui/rater.dart';
@@ -19,23 +20,9 @@ void main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: WelcomePage(),
-    );
-  }
-}
-
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
-  //Hello
+  //Hello////
   final String title;
 
   @override
@@ -84,13 +71,16 @@ class _MyHomePageState extends State<MyHomePage> {
               // Otherwise, you'll get a silent exception somewhere in the stack
               // trace, but the parameter is never marked as @required, so you'll
               // never know unless you check the stack trace
-              geometry: new LatLng(_currentPosition.latitude, _currentPosition.longitude),
+              geometry: new LatLng(
+                  _currentPosition.latitude, _currentPosition.longitude),
               draggable: false,
             ),
           )
           .then((value) => userCircle = value)
           .then((v) {
-        if (move) _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(_currentPosition.latitude, _currentPosition.longitude)));
+        if (move)
+          _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(
+              _currentPosition.latitude, _currentPosition.longitude)));
       });
     } else {
       _controller
@@ -105,11 +95,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 // Otherwise, you'll get a silent exception somewhere in the stack
                 // trace, but the parameter is never marked as @required, so you'll
                 // never know unless you check the stack trace
-                geometry: new LatLng(_currentPosition.latitude, _currentPosition.longitude),
+                geometry: new LatLng(
+                    _currentPosition.latitude, _currentPosition.longitude),
                 draggable: false,
               ))
           .then((v) {
-        if (move) _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(_currentPosition.latitude, _currentPosition.longitude)));
+        if (move)
+          _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(
+              _currentPosition.latitude, _currentPosition.longitude)));
       });
     }
   }
@@ -126,7 +119,8 @@ class _MyHomePageState extends State<MyHomePage> {
     currentlyLoaded = points;
     for (int i = 0; i < points.length; i++) {
       if (i == 0) {
-        _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(points[i].position.lat, points[i].position.lon)));
+        _controller.moveCamera(CameraUpdate.newLatLng(
+            new LatLng(points[i].position.lat, points[i].position.lon)));
       }
 
       String colorString = "";
@@ -160,7 +154,8 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       loadingLocation = true;
     });
-    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low).then((Position position) {
+    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low)
+        .then((Position position) {
       setState(() {
         loadingLocation = false;
         _currentPosition = position;
@@ -171,7 +166,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _settingModalBottomSheetAddLocation(BuildContext context, String address) {
+  void _settingModalBottomSheetAddLocation(
+      BuildContext context, String address) {
     FocusScopeNode currentFocus = FocusScope.of(context);
 
     if (!currentFocus.hasPrimaryFocus) {
@@ -181,7 +177,8 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.push(context, MaterialPageRoute(builder: (cont) {
       return NewRating(
         address: address,
-        currentPosition: new LatLon(_currentPosition.latitude, _currentPosition.longitude),
+        currentPosition:
+            new LatLon(_currentPosition.latitude, _currentPosition.longitude),
       );
     }));
   }
@@ -195,7 +192,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     List<Widget> tempPlaces = new List<Widget>();
 
-    for (int i = 0; i < currentlyLoaded.length.clamp(0,4); i++) {
+    for (int i = 0; i < currentlyLoaded.length.clamp(0, 4); i++) {
       tempPlaces.add(new PlaceWidget(
         place: currentlyLoaded[i],
         focusOn: (place) {
@@ -225,7 +222,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: TextStyle(fontSize: 22),
                     ),
                   ),
-                  (tempPlaces.length <= 0) ? Text('No Search Results Found') : Container(),
+                  (tempPlaces.length <= 0)
+                      ? Text('No Search Results Found')
+                      : Container(),
                   ...tempPlaces
                 ],
               ));
@@ -243,8 +242,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return fetchAll().then((places) {
       print("NEED : " + pos.lat.toString() + " , " + pos.lon.toString());
       for (int i = 0; i < places.length; i++) {
-        print(places[i].position.lat.toString() + " , " + places[i].position.lon.toString());
-        if (approximatelyEqual(places[i].position.lat, pos.lat) && approximatelyEqual(places[i].position.lon, pos.lon)) {
+        print(places[i].position.lat.toString() +
+            " , " +
+            places[i].position.lon.toString());
+        if (approximatelyEqual(places[i].position.lat, pos.lat) &&
+            approximatelyEqual(places[i].position.lon, pos.lon)) {
           return places[i];
         }
       }
@@ -254,7 +256,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void focusOn(Place place, bool move) {
-    if (move) _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(place.position.lat, place.position.lon)));
+    if (move)
+      _controller.moveCamera(CameraUpdate.newLatLng(
+          new LatLng(place.position.lat, place.position.lon)));
     setState(() {
       didMakeRatingChange = false;
       ratingPanel = true;
@@ -263,7 +267,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void onCircleTapped(Circle tappedCircle) {
-    findPlace(new LatLon(tappedCircle.options.geometry.latitude, tappedCircle.options.geometry.longitude)).then((place) {
+    findPlace(new LatLon(tappedCircle.options.geometry.latitude,
+            tappedCircle.options.geometry.longitude))
+        .then((place) {
       if (place != null) {
         focusOn(place, false);
       }
@@ -278,7 +284,8 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Stack(
           children: [
             MapboxMap(
-              accessToken: "pk.eyJ1IjoiYXZlbmsyIiwiYSI6ImNqcTV3ZG50bTI5MXM0OXVpbGdwdnBjaWoifQ.tReRhSlsmVBqt8lwwq1wHg",
+              accessToken:
+                  "pk.eyJ1IjoiYXZlbmsyIiwiYSI6ImNqcTV3ZG50bTI5MXM0OXVpbGdwdnBjaWoifQ.tReRhSlsmVBqt8lwwq1wHg",
               styleString: "mapbox://styles/avenk2/cjqaxhjumfqds2spbiudepom4",
               initialCameraPosition: CameraPosition(
                 zoom: 15.0,
@@ -335,9 +342,12 @@ class _MyHomePageState extends State<MyHomePage> {
               alignment: Alignment.bottomLeft,
               child: CircleButton(
                 icon: Icon(Icons.location_on, color: Colors.white),
-                margin: EdgeInsets.only(bottom: (ratingPanel && selectedPlace != null) ? 30 : 130, left: 20),
+                margin: EdgeInsets.only(
+                    bottom: (ratingPanel && selectedPlace != null) ? 30 : 130,
+                    left: 20),
                 tapCallback: () {
-                  _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(_currentPosition.latitude, _currentPosition.longitude)));
+                  _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(
+                      _currentPosition.latitude, _currentPosition.longitude)));
                   _getCurrentLocation((pos) {
                     createUserMapPosition(true);
                   });
@@ -348,13 +358,17 @@ class _MyHomePageState extends State<MyHomePage> {
               alignment: Alignment.bottomLeft,
               child: CircleButton(
                 icon: Icon(Icons.add, color: Colors.white),
-                margin: EdgeInsets.only(bottom: (ratingPanel && selectedPlace != null) ? 30 : 130, left: 80),
+                margin: EdgeInsets.only(
+                    bottom: (ratingPanel && selectedPlace != null) ? 30 : 130,
+                    left: 80),
                 tapCallback: () {
                   setState(() {
                     loadingLocation = true;
                   });
 
-                  getAddress(new LatLon(_currentPosition.latitude, _currentPosition.longitude)).then((value) {
+                  getAddress(new LatLon(_currentPosition.latitude,
+                          _currentPosition.longitude))
+                      .then((value) {
                     setState(() {
                       loadingLocation = false;
                     });
@@ -386,16 +400,26 @@ class _MyHomePageState extends State<MyHomePage> {
                             Align(
                                 alignment: Alignment.topLeft,
                                 child: Padding(
-                                  padding: const EdgeInsets.only(top: 20.0, bottom: 8.0, left: 20, right: 20),
+                                  padding: const EdgeInsets.only(
+                                      top: 20.0,
+                                      bottom: 8.0,
+                                      left: 20,
+                                      right: 20),
                                   child: Text(
                                     selectedPlace.name,
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 )),
                             Align(
                               alignment: Alignment.bottomLeft,
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 20, right: 20, top: 8.0, bottom: 15.0),
+                                padding: const EdgeInsets.only(
+                                    left: 20,
+                                    right: 20,
+                                    top: 8.0,
+                                    bottom: 15.0),
                                 child: Text(selectedPlace.address),
                               ),
                             ),

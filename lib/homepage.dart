@@ -40,17 +40,31 @@ class WelcomePage extends StatelessWidget {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                // image: DecorationImage(
-                //   image: AssetImage("assets/logo.jpeg"),
-                //   fit: BoxFit.cover,
-                // ),
+                image: DecorationImage(
+                  image: AssetImage("assets/logo.jpeg"),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
           Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Your Local Covid-Safety Assisstant\n",
+                        style: Theme.of(context).textTheme.headline,
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 80.0,
+                ),
                 RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
@@ -67,6 +81,8 @@ class WelcomePage extends StatelessWidget {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
+                          //////// NEXT PAGE HERE ///////////////////
+                          //////////////////////////////////////////
                           return MyHomePage();
                         },
                       ));
