@@ -6,28 +6,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 List<Place> _listOfPlaces;
 
-firebaseStore(Place newDetails) {
-  // THis function works
+void firebaseStore(Place newDetails) {
   CollectionReference places = FirebaseFirestore.instance.collection('Places');
   places.doc(newDetails.address).set(_placeToMap(newDetails));
 }
 
-fetchAll() async {
-  //function is working
-  CollectionReference _collectionRef =
-      FirebaseFirestore.instance.collection('Places');
-  // Get docs from collection reference
-  QuerySnapshot querySnapshot = await _collectionRef.get();
-  // Get data from docs and convert map to List
-  final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
-  return allData;
+Future<List<Place>> fetchAll() async
+{ 
+  if(_listOfPlaces!=null) return List.from(_listOfPlaces);
+  _listOfPlaces = [];
+  CollectionReference places = FirebaseFirestore.instance.collection('Places');
+  var collectionSnapshot = await places.get();
+  collectionSnapshot.docs.forEach((element) { _listOfPlaces.add(_snapshotToPlace(element));});
+  return List.from(_listOfPlaces);
 }
 
-fetchByType(String type) async {
+Future<List<Place>> fetchByType(String type) async
+{
   var places = await fetchAll();
-  places.removeWhere(([element]) => element['type'] != type);
-  print("*******************");
-  print(places);
+  places.removeWhere((element) => !element.type.contains(type));
   return places;
 }
 
@@ -54,4 +51,21 @@ Place _snapshotToPlace(DocumentSnapshot snapshot) {
   place.cleanlinessScore = snapshot['cleanliness_score'];
   place.staffFriendlinessScore = snapshot['staff_friendliness_score'];
   return place;
+}
+
+Future<void> rate(String address, double socialDistancingScore, double cleanlinessScore, double staffFriendlinessScore) async
+{
+  Place place = (await fetchAll()).firstWhere((element) => element.address==address);
+  int count = place.ratingCount;
+  place.socialDistancingScore = (count * place.socialDistancingScore + socialDistancingScore) / (count + 1);
+  place.cleanlinessScore = (count * place.cleanlinessScore + cleanlinessScore) / (count + 1);
+  place.staffFriendlinessScore = (count * place.staffFriendlinessScore + staffFriendlinessScore) / (count + 1);
+  place.ratingCount++;
+  firebaseStore(place);
+  FirebaseFirestore.instance.collection("Ratings").add({
+    'address': address, 
+    'socialDistancingScore': socialDistancingScore,
+    'cleanlinessScore': cleanlinessScore,
+    'staffFriendlinessScore': staffFriendlinessScore
+  });
 }
