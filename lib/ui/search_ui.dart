@@ -3,9 +3,10 @@ import 'package:LocationRater/search.dart';
 import 'package:flutter/material.dart';
 
 class SearchBar extends StatefulWidget {
-  SearchBar({Key key, this.pointsFound}) : super(key: key);
+  SearchBar({Key key, this.pointsFound, this.clearPoints}) : super(key: key);
 
   final Function(List<Place>) pointsFound;
+  final Function clearPoints;
 
   @override
   _SearchBarState createState() => _SearchBarState();
@@ -21,17 +22,12 @@ class _SearchBarState extends State<SearchBar> {
   Widget build(BuildContext context) {
     return Container(
         margin: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 50),
-        height: 50,
+        height: 80,
         
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(10)),
-          boxShadow: [BoxShadow(
-            offset: new Offset(2, 2),
-            blurRadius: 3,
-            color:  Colors.grey,
-            spreadRadius: 1,
-          ),]
+          border: Border.all(style: BorderStyle.solid, color: Colors.grey.shade200, width: 2),
           
         ),
 
@@ -40,6 +36,10 @@ class _SearchBarState extends State<SearchBar> {
             Expanded(
                 flex: 90,
                 child: TextField(
+                style: TextStyle
+                (
+                  fontSize: 22,
+                ),
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   enabledBorder: null,
@@ -57,6 +57,7 @@ class _SearchBarState extends State<SearchBar> {
             Expanded(
               flex: 10,
               child: IconButton(icon: Icon(Icons.arrow_right), onPressed: () {
+                widget.clearPoints();
                 search(currentText.toLowerCase().trim()).then((value) => widget.pointsFound(value));
               }),
             )

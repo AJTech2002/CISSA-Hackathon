@@ -9,6 +9,9 @@ import 'base.dart';
   /// When the location services are not enabled or permissions
   /// are denied the Future will return an error.
   Future<LatLon> getCurrentLocation() async {
+
+    print ("STARTED");
+
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -40,12 +43,17 @@ import 'base.dart';
           'Location permissions are permanently denied, we cannot request permissions.');
     }
 
+  print("FINDING??");
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     double lat = position.latitude;
     double long = position.longitude;
+
+    print ("FOUND");
+    print (long);
+    print (lat);
     return LatLon(lat, long);
   }
 
