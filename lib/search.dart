@@ -2,34 +2,7 @@ import 'package:geolocator/geolocator.dart';
 
 import 'base.dart';
 import 'gpsCalculator.dart';
-
-// begin mock functions
-
-Future<List<Place>> fetchAllRestaurants() async{
-  Place a= Place("5 queen st", "restaurant", LatLon(37.824611,144.943055));
-  a.name = "mcdonalds";
-  a.cleanlinessScore = 3;
-  a.socialDistancingScore = 4;
-  a.staffFriendlinessScore = 4;
-  Place b = Place("2 swanston st", "restaurant", LatLon(37.814611,144.963055));
-  b.name = "kfc";
-  b.cleanlinessScore = 5;
-  b.socialDistancingScore = 5;
-  b.staffFriendlinessScore = 1;
-  Place c = Place("253 swanston st", "casino", LatLon(37.813555,144.963955));
-  c.name = "crown";
-  c.cleanlinessScore = 5;
-  c.socialDistancingScore = 4;
-  c.staffFriendlinessScore = 5;
-  return [
-    a,
-    b,
-    c
-  ];
-}
-
-
-// end mock functions
+import 'firebase.dart';
 
 
 // Search function
@@ -45,7 +18,7 @@ Future<List<Place>> search(String query) async
   // split query base on spaces to find keyword
   var querySplit = query.split(" ");
   // retrieve places from database
-  var places = await fetchAllRestaurants();
+  var places = await fetchAll();
   // 
   var currentPos=await getCurrentLocation();
 

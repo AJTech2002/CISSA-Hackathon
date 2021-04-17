@@ -8,6 +8,7 @@ class Place {
 
   LatLon position;
   
+  int ratingCount;
   //All out of 5
   double socialDistancingScore;
   double cleanlinessScore;
