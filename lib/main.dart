@@ -5,6 +5,9 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 
 import 'gpsCalculator.dart';
 import 'package:geolocator/geolocator.dart';
+
+import 'ui/circle_button.dart';
+
 import 'base.dart';
 
 import 'ui/search_ui.dart';
@@ -16,7 +19,6 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -38,11 +40,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   MapboxMapController _controller;
   Circle userCircle;
   double lat;
   double lon;
+
+  bool searchSectionOpen = false;
 
   List<Place> currentlyLoaded = new List<Place>();
 
@@ -56,75 +59,72 @@ class _MyHomePageState extends State<MyHomePage> {
     Future.delayed(Duration(milliseconds: 2000), () {
       createUserMapPosition(true);
     });
-    
   }
 
+  void createUserMapPosition(bool move) {
+    _controller.removeCircle(userCircle);
+    if (userCircle == null) {
+      _controller
+          .addCircle(
+            CircleOptions(
+              circleRadius: 12.0,
+              circleColor: '#3885ff',
+              circleOpacity: 1,
 
-  void createUserMapPosition (bool move)
-  {
-      if (userCircle == null)
-      {
-        _controller.addCircle(CircleOptions(
-            circleRadius: 8.0,
-            circleColor: '#ffffff',
-            circleOpacity: 0.8,
-            
-            // YOU NEED TO PROVIDE THIS FIELD!!!
-            // Otherwise, you'll get a silent exception somewhere in the stack
-            // trace, but the parameter is never marked as @required, so you'll
-            // never know unless you check the stack trace
-            geometry: new LatLng(_currentPosition.latitude, _currentPosition.longitude),
-            draggable: false,
-          ),).then((value) => userCircle).then((v) {
-            if (move)
-            _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(_currentPosition.latitude, _currentPosition.longitude)));
-          });
-      }
-      else {
-        
-        _controller.updateCircle(userCircle, CircleOptions(
-            circleRadius: 8.0,
-            circleColor: '#ffffff',
-            circleOpacity: 0.8,
-            
-            // YOU NEED TO PROVIDE THIS FIELD!!!
-            // Otherwise, you'll get a silent exception somewhere in the stack
-            // trace, but the parameter is never marked as @required, so you'll
-            // never know unless you check the stack trace
-            geometry: new LatLng(_currentPosition.latitude, _currentPosition.longitude),
-            draggable: false,
-          )).then((value) => userCircle).then((v) {
-            if (move)
-            _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(_currentPosition.latitude, _currentPosition.longitude)));
-          });
+              // YOU NEED TO PROVIDE THIS FIELD!!!
+              // Otherwise, you'll get a silent exception somewhere in the stack
+              // trace, but the parameter is never marked as @required, so you'll
+              // never know unless you check the stack trace
+              geometry: new LatLng(
+                  _currentPosition.latitude, _currentPosition.longitude),
+              draggable: false,
+            ),
+          )
+          .then((value) => userCircle = value)
+          .then((v) {
+        if (move)
+          _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(
+              _currentPosition.latitude, _currentPosition.longitude)));
+      });
+    } else {
+      _controller
+          .updateCircle(
+              userCircle,
+              CircleOptions(
+                circleRadius: 12.0,
+                circleColor: '#3885ff',
+                circleOpacity: 1,
 
-      }
+                // YOU NEED TO PROVIDE THIS FIELD!!!
+                // Otherwise, you'll get a silent exception somewhere in the stack
+                // trace, but the parameter is never marked as @required, so you'll
+                // never know unless you check the stack trace
+                geometry: new LatLng(
+                    _currentPosition.latitude, _currentPosition.longitude),
+                draggable: false,
+              ))
+          .then((v) {
+        if (move)
+          _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(
+              _currentPosition.latitude, _currentPosition.longitude)));
+      });
+    }
   }
 
-  void updateMapPosition ()
-  {
-    
-  }
+  void updateMapPosition() {}
 
-  
-  void clearPoints ()
-  {
+  void clearPoints() {
     _controller.clearCircles();
     createUserMapPosition(false);
-
   }
 
-  void addPoints (List<Place> points)
-  {
+  void addPoints(List<Place> points) {
     currentlyLoaded = points;
-    for (int i = 0; i < points.length; i++)
-    {
-      if (i == 0)
-      {
-        _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(points[i].position.lat, points[i].position.lon)));
+    for (int i = 0; i < points.length; i++) {
+      if (i == 0) {
+        _controller.moveCamera(CameraUpdate.newLatLng(
+            new LatLng(points[i].position.lat, points[i].position.lon)));
       }
-
-      print (((points[i].cleanlinessScore+points[i].socialDistancingScore+points[i].staffFriendlinessScore)/3)/5);
 
       String colorString = "";
 
@@ -138,139 +138,141 @@ class _MyHomePageState extends State<MyHomePage> {
         colorString = "#ffa51f";
       else if (i == 4)
         colorString = "#ff5e1f";
-      else if (i > 5)
-        colorString = "#ff2e1f";
+      else if (i > 5) colorString = "#ff2e1f";
 
-
-      _controller.addCircle(
-        CircleOptions(
-            circleRadius: 8.0,
-            circleColor: colorString,
-            circleOpacity: 0.8,
-          
-            geometry: new LatLng(points[i].position.lat,points[i].position.lon),
-            draggable: false,
-        )
-      );
+      _controller.addCircle(CircleOptions(
+        circleRadius: 10.0,
+        circleColor: colorString,
+        circleOpacity: 1,
+        geometry: new LatLng(points[i].position.lat, points[i].position.lon),
+        draggable: false,
+      ));
     }
-    
   }
 
   Position _currentPosition;
 
   _getCurrentLocation(Function(Position) then) {
-    Geolocator
-      .getCurrentPosition(desiredAccuracy: LocationAccuracy.best, forceAndroidLocationManager: true)
-      .then((Position position) {
-        setState(() {
-          _currentPosition = position;
-        });
-        then(position);
-      }).catchError((e) {
-        print(e);
+    Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.low,
+            forceAndroidLocationManager: true)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
       });
+      then(position);
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+  String searchQuery = "";
+
+  void _settingModalBottomSheet(context) {
+    FocusScopeNode currentFocus = FocusScope.of(context);
+
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
+
+    List<Widget> tempPlaces = new List<Widget>();
+
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+              color: Colors.white12,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Text(
+                      'Search Results for "' + searchQuery + '"',
+                      style: TextStyle(fontSize: 22),
+                    ),
+                  ),
+                  ...tempPlaces
+                ],
+              ));
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-            child: Container(
-              child: Stack(
-                children: [
-                  MapboxMap(
-                    accessToken: "pk.eyJ1IjoiYXZlbmsyIiwiYSI6ImNqcTV3ZG50bTI5MXM0OXVpbGdwdnBjaWoifQ.tReRhSlsmVBqt8lwwq1wHg",
-                    styleString: "mapbox://styles/avenk2/ck1yaasvr65je1dpa0t9ctuaq",
-                    initialCameraPosition: CameraPosition(
-                      zoom: 15.0,
-                      target: LatLng(-37.8136, 144.9631),
-                    ),
+        child: Container(
+            child: Stack(
+          children: [
+            MapboxMap(
+              accessToken:
+                  "pk.eyJ1IjoiYXZlbmsyIiwiYSI6ImNqcTV3ZG50bTI5MXM0OXVpbGdwdnBjaWoifQ.tReRhSlsmVBqt8lwwq1wHg",
+              styleString: "mapbox://styles/avenk2/cjqaxhjumfqds2spbiudepom4",
+              initialCameraPosition: CameraPosition(
+                zoom: 15.0,
+                target: LatLng(-37.7983, 144.9610),
+              ),
+              compassEnabled: false,
+              tiltGesturesEnabled: false,
+              onMapCreated: (MapboxMapController controller) {
+                setState(() {
+                  _controller = controller;
+                });
+              },
+              onMapClick: (point, lat) {
+                FocusScopeNode currentFocus = FocusScope.of(context);
 
-                    compassEnabled: false,
-                    tiltGesturesEnabled: false,
-
-                    onMapCreated: (MapboxMapController controller) {
-                      
-                      setState(() {
-                        _controller = controller;
-                      });
-                      
-                      
-                      // getCurrentLocation().then((value) {
-                      //   setState(() {
-                      //     lat = value.lat;
-                      //     lon = value.lon;
-                      //   });
-                        
-                      //   controller.animateCamera(
-                      //     CameraUpdate.newLatLng(new LatLng(lat, lon))
-                      //   );
-                      // });
-                    },
-
-                    onMapClick: (point, lat)
-                    {
-                      FocusScopeNode currentFocus = FocusScope.of(context);
-
-                      if (!currentFocus.hasPrimaryFocus) {
-                        currentFocus.unfocus();
-                      }
-                    },
-
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: SearchBar(
-                      pointsFound: (points) => addPoints(points),
-                      clearPoints: () => clearPoints()
-                    ),
-                  ),
-                  Text((_currentPosition != null) ? (_currentPosition.latitude.toString() + " , " + _currentPosition.longitude.toString()) : "NONE"),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Container (
-                      width: 60,
-                      height: 60,
-                      margin: EdgeInsets.only(right: 20, top: 100),
-                      decoration: BoxDecoration
-                      (
-                        color: Colors.orangeAccent,
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(color: Colors.orangeAccent.shade100, width: 2, style: BorderStyle.solid),
-                      ),
-                      child: Center(
-                        child: Icon(Icons.star, color: Colors.white)
-                      )
-                    )
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: GestureDetector(
-                      onTap: () {
-                        print("Tapped Location");
-                        _getCurrentLocation((pos) {
-                          createUserMapPosition(true);
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+              },
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                  height: 120,
+                  width: MediaQuery.of(context).size.width,
+                  child: SearchBar(
+                      pointsFound: (points, text) {
+                        setState(() {
+                          searchQuery = text;
+                          currentlyLoaded = points;
                         });
+                        _settingModalBottomSheet(context);
+                        addPoints(points);
                       },
-                      child: Container (
-                        width: 60,
-                        height: 60,
-                        margin: EdgeInsets.only(right: 20, top: 20),
-                        decoration: BoxDecoration
-                        (
-                          color: Colors.orangeAccent,
-                          borderRadius: BorderRadius.circular(50),
-                          border: Border.all(color: Colors.orangeAccent.shade100, width: 2, style: BorderStyle.solid),
-                        ),
-                        child: Center(
-                          child: Icon(Icons.location_pin, color: Colors.white)
-                        )
-                      ),
-                    )
-                  )
-                ],
-              )
-        ),
+                      clearPoints: () => clearPoints())),
+            ),
+            Text((_currentPosition != null)
+                ? (_currentPosition.latitude.toString() +
+                    " , " +
+                    _currentPosition.longitude.toString())
+                : "NONE"),
+            Align(
+              alignment: Alignment.topRight,
+              child: CircleButton(
+                icon: Icon(Icons.location_on, color: Colors.white),
+                margin: EdgeInsets.only(top: 20, right: 20),
+                tapCallback: () {
+                  _controller.moveCamera(CameraUpdate.newLatLng(new LatLng(
+                      _currentPosition.latitude, _currentPosition.longitude)));
+                  _getCurrentLocation((pos) {
+                    createUserMapPosition(true);
+                  });
+                },
+              ),
+            ),
+            Align(
+                alignment: Alignment.topRight,
+                child: CircleButton(
+                  icon: Icon(Icons.add_location, color: Colors.white),
+                  margin: EdgeInsets.only(top: 100, right: 20),
+                  tapCallback: () {
+                    print("Switch");
+                  },
+                ))
+          ],
+        )),
       ),
     );
   }

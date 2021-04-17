@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class SearchBar extends StatefulWidget {
   SearchBar({Key key, this.pointsFound, this.clearPoints}) : super(key: key);
 
-  final Function(List<Place>) pointsFound;
+  final Function(List<Place>, String) pointsFound;
   final Function clearPoints;
 
   @override
@@ -58,7 +58,7 @@ class _SearchBarState extends State<SearchBar> {
               flex: 10,
               child: IconButton(icon: Icon(Icons.arrow_right), onPressed: () {
                 widget.clearPoints();
-                search(currentText.toLowerCase().trim()).then((value) => widget.pointsFound(value));
+                search(currentText.toLowerCase().trim()).then((value) => widget.pointsFound(value, currentText));
               }),
             )
           ],
