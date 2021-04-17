@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'constants.dart';
 import 'commentpage.dart';
+import 'rating.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -83,7 +84,7 @@ class WelcomePage extends StatelessWidget {
                         builder: (context) {
                           //////// NEXT PAGE HERE ///////////////////
                           //////////////////////////////////////////
-                          return CommentPage(); // NEED REFACTOR
+                          return RatingPage(); // NEED REFACTOR
                         },
                       ));
                     },
