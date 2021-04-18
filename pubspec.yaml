@@ -35,6 +35,8 @@ dependencies:
   geocoding: ^1.0.5
   mapbox_gl: ^0.11.0
   smooth_star_rating: ^1.1.1
+  url_launcher: ^5.4.11
+
 
 dev_dependencies:
   flutter_test:

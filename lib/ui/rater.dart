@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../base.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 class Rater extends StatefulWidget {
   Rater({Key key, this.selectedPlace, this.callbackSubmit, this.didChange, this.didCancel}) : super(key: key);
 
@@ -139,6 +139,19 @@ class _RaterState extends State<Rater> {
                     ),
                     RawMaterialButton(
                       onPressed: () {
+                        launch("https://www.google.com/maps/place/${widget.selectedPlace.address}/");
+                      },
+                      elevation: 0.0,
+                      fillColor: Colors.white,
+                      child: Icon(
+                        Icons.map_outlined,
+                        size: 25.0,
+                      ),
+                      padding: EdgeInsets.all(15.0),
+                      shape: CircleBorder(),
+                    ),
+                    RawMaterialButton(
+                      onPressed: () {
                         widget.didCancel();
                       },
                       elevation: 0.0,
@@ -150,6 +163,7 @@ class _RaterState extends State<Rater> {
                       padding: EdgeInsets.all(15.0),
                       shape: CircleBorder(),
                     ),
+                    
                   ],
                 )),
           )

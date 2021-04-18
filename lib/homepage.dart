@@ -17,28 +17,34 @@ class WelcomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBackgroundColor,
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/logo.jpeg"),
-                  fit: BoxFit.cover,
+      body: SafeArea(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: 75,
+                  height: 75,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/logo.jpeg"),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                RichText(
+              Align(
+                alignment: Alignment.topCenter,
+                child: RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: "Your Local Covid-Safety Assisstant\n",
+                        text: "Health Comply\n",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 30,
@@ -48,25 +54,30 @@ class WelcomePage extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 80.0,
-                ),
-                RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "Welcome!\n",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 40),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Your local COVID Safety Assistant.\n",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-                FittedBox(
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: FittedBox(
                   child: GestureDetector(
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
@@ -79,8 +90,7 @@ class WelcomePage extends StatelessWidget {
                     },
                     child: Container(
                       margin: EdgeInsets.only(bottom: 25),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 26, vertical: 16),
+                      padding: EdgeInsets.symmetric(horizontal: 26, vertical: 16),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25),
                         color: kPrimaryColor,
@@ -103,10 +113,10 @@ class WelcomePage extends StatelessWidget {
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
